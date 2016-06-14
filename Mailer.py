@@ -14,6 +14,10 @@ class Mailer(object):
         self.usr      = usr
         self.pwd      = pwd
         self.debug    = debug
+        self.header   = ""
+        self.msg      = ""
+        self.fromaddr = ""
+        self.toaddr   = ""
 
     def connect(self):
         self.smtp = smtplib.SMTP(self.server, self.port)
@@ -23,8 +27,20 @@ class Mailer(object):
         self.smtp.set_debuglevel(self.debug)
         self.smtp.login(self.usr, self.pwd)
 
-    def send(self, fromaddr, toaddr, msg):
-        self.smtp.sendmail(fromaddr, toaddr, msg)
+    def send(self):
+        if (self.toaddr == ""):
+            return False
+        self.smtp.sendmail(self.fromaddr, self.toaddr,self.header + self.msg)
+        return True
+
+    def head(self, toaddr, fromaddr, title):
+        self.header = ('To:' + toaddr + '\n' + 'From: '
+                   + fromaddr + '\n' + 'Subject: ' + title + '\n')
+        self.fromaddr = fromaddr
+        self.toaddr   = toaddr
+
+    def message(self, msg):
+        self.msg = msg
 
     def __del__(self):
         if (self.smtp):

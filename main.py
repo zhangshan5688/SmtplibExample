@@ -22,11 +22,10 @@ def main():
     fromaddr = user
     toaddr   = input("Mail to: ")
     title    = input("Title: ")
+    MyMail = Mailer(server, port, user, pwd)
+    MyMail.head(toaddr, fromaddr, title)
 
     print ('To send double press >> Enter')
-
-    header = ('To:' + toaddr + '\n' + 'From: '
-              + fromaddr + '\n' + 'Subject: ' + title + '\n')
 
     while True:
         try:
@@ -35,13 +34,16 @@ def main():
             break
         if not line:
             break
-        msg = header + line
+        MyMail.message(line)
 
-    print ('Message length is ' + str(len(msg)))
+    print ('Message length is ' + str(len(line)))
 
-    MyMail = Mailer(server, port, user, pwd)
     MyMail.connect()
-    MyMail.send(fromaddr, toaddr, msg)
+    if (MyMail.send()):
+        print ("Success!")
+    else :
+        print ("Failed!")
+
     del MyMail
 
 if __name__ == "__main__":
